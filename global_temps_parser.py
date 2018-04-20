@@ -34,7 +34,7 @@ def import_gistemp(filename, save=False):
 
 def import_noaa(filename):
     '''
-    Import NASA's GlobalTemp
+    Import NOAA's GlobalTemp
     '''
     df = pd.read_csv(filename, skiprows=5, names=['date', 'noaa'])
     df['year'] = df['date'].astype(str).str[:4]
