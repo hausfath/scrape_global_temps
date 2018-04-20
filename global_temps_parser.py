@@ -15,7 +15,7 @@ cowtan_way_file = 'http://www-users.york.ac.uk/~kdc3/papers/coverage2013/had4_kr
 start_year = 1971
 end_year = 2000
 
-def import_gistemp(filename, save=False):
+def import_gistemp(filename):
     '''
     Import NASA's GISTEMP, reformatting it to long
     '''
