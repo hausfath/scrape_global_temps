@@ -1,5 +1,6 @@
 import pandas as pd
 import os, io, requests
+from functools import reduce
 
 #Set to your working directory
 os.chdir('/Users/hausfath/Desktop/Climate Science/')
