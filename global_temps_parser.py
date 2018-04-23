@@ -1,9 +1,15 @@
 import pandas as pd
 import os, io, requests
+from os.path import join
 from functools import reduce
 
 #Set to your working directory
-os.chdir('/Users/hausfath/Desktop/Climate Science/')
+cwd = os.getcwd()
+
+# Add additional path segments to reach download directory
+# e.g. join(cwd, 'downloads') or join(cwd, '..', 'download_here')
+download_dir = join(cwd)
+
 
 #File URLs
 gistemp_file = 'https://data.giss.nasa.gov/gistemp/tabledata_v3/GLB.Ts+dSST.csv'
@@ -105,4 +111,7 @@ def rebaseline(temps, start_year, end_year):
 
 
 combined_temps = combined_global_temps(start_year, end_year)
-combined_temps.to_csv('combined_temps_base_'+str(start_year)+'_to_'+str(end_year)+'.csv')
+path_out = join(download_dir,
+                'combined_temps_base_{}_to_{}.csv'.format(start_year,
+                                                          end_year))
+combined_temps.to_csv(path_out, index=False)
