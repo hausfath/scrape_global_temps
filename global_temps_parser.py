@@ -24,7 +24,7 @@ cur_year = str(today.year)
 copernicus_file = 'https://climate.copernicus.eu/sites/default/files/'+cur_year+'-'+cur_month+'/ts_1month_anomaly_Global_ei_2T_'
 
 #Common baseline period (inclusive)
-rebaseline = True
+to_rebaseline = True
 start_year = 1979
 end_year = 2016
 
@@ -44,6 +44,7 @@ def import_gistemp(filename):
     df_long.drop(columns='index', inplace=True)
     df_long = df_long.apply(pd.to_numeric, errors='coerce')
     df_long.sort_values(by=['year', 'month'], inplace=True)
+    df_long['gistemp'] = df_long['gistemp'] / 100.
     df_long.reset_index(inplace=True, drop=True)
     return df_long
 
@@ -122,11 +123,11 @@ def find_copernicus_file():
     return copernicus_filename
 
 
-def combined_global_temps(start_year, end_year, rebaseline=True):
+def combined_global_temps(start_year, end_year, to_rebaseline=True):
     '''
     Merge all the files together, rebaselining them all to a common period.
     '''
-    if rebaseline == True:
+    if to_rebaseline == True:
         hadley = rebaseline(import_hadley(hadley_file), start_year, end_year)
         gistemp = rebaseline(import_gistemp(gistemp_file), start_year, end_year)
         noaa = rebaseline(import_noaa(noaa_file), start_year, end_year)
@@ -158,10 +159,8 @@ def rebaseline(temps, start_year, end_year):
     temps.iloc[:, 2] -= mean
     return temps
 
-
-if rebaseline == True:
-    combined_temps = combined_global_temps(start_year, end_year)
+combined_temps = combined_global_temps(start_year, end_year, to_rebaseline)
+if to_rebaseline == True:
     combined_temps.to_csv('combined_temps_base_'+str(start_year)+'_to_'+str(end_year)+'.csv')
 else:
-    combined_temps = combined_global_temps(start_year, end_year, rebaseline=False)
     combined_temps.to_csv('combined_temps_separate_base.csv')
