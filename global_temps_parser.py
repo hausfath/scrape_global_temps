@@ -5,7 +5,15 @@ import os, io, requests
 from datetime import datetime
 from functools import reduce
 today = datetime.today()
+import monthdelta
 
+#from datetime import date, timedelta
+
+#this is because the naming of the file for copernicus has changed; current filename is 
+#https://climate.copernicus.eu/sites/default/files/2019-05/ts_1month_anomaly_Global_ea_2T_201904.csv
+#set month to 2-months before
+prev = datetime.today().replace(day=1) - monthdelta.monthdelta(2)
+two_month = str((prev - monthdelta.monthdelta(1)).month).rjust(2,'0')
 
 #Set to your working directory
 os.chdir('/Users/hausfath/Desktop/Climate Science/')
@@ -19,9 +27,10 @@ hadley_file = 'https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/time_se
 berkeley_file = 'http://berkeleyearth.lbl.gov/auto/Global/Land_and_Ocean_complete.txt'
 cowtan_way_file = 'http://www-users.york.ac.uk/~kdc3/papers/coverage2013/had4_krig_v2_0_0.txt'
 
-cur_month = str(today.month).rjust(2, '0')
+cur_month = str(prev.month).rjust(2, '0')
 cur_year = str(today.year)
-copernicus_file = 'https://climate.copernicus.eu/sites/default/files/'+cur_year+'-'+cur_month+'/ts_1month_anomaly_Global_ei_2T_'
+#filename has changed from _ei to _ea
+copernicus_file = 'https://climate.copernicus.eu/sites/default/files/'+cur_year+'-'+cur_month+'/ts_1month_anomaly_Global_ea_2T_'
 
 #Common baseline period (inclusive)
 to_rebaseline = True
@@ -113,12 +122,12 @@ def find_copernicus_file():
     has yet to be updated.
     '''
     try:
-        month = str(today.month).rjust(2, '0')
-        copernicus_filename = copernicus_file+str(today.year)+month+'.csv'
+        month = str(prev.month).rjust(2, '0')
+        copernicus_filename = copernicus_file+str(prev.year)+str(two_month)+'.csv'
         pd.read_csv(copernicus_filename, header=1)
     except:
-        month = str(today.month - 1).rjust(2, '0')
-        copernicus_filename = copernicus_file+str(today.year)+month+'.csv'
+        month = str(prev.month - 1).rjust(2, '0')
+        copernicus_filename = copernicus_file+str(prev.year)+str(two_month)+'.csv'
         pd.read_csv(copernicus_filename, header=1)
     return copernicus_filename
 
